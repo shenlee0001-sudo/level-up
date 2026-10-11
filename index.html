@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Level Up</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Nunito:wght@400;700;800&display=swap">
+<style>
+:root{--bg:#e7efe6;--card:#f7fbf5;--ink:#17302a;--mute:#3f574f;--line:#c9dacb;--gold:#a8730a;--acc:#1d7a5c;--accT:#fff;--ok:#1d7a5c;--bar:#cfe0d2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1a1d;--card:#122a2e;--ink:#e6f4ee;--mute:#b5d0c7;--line:#21433f;--gold:#f0c35a;--acc:#4fd1a5;--accT:#062119;--ok:#4fd1a5;--bar:#1d3b3b}}
+:root[data-theme="dark"]{--bg:#0b1a1d;--card:#122a2e;--ink:#e6f4ee;--mute:#b5d0c7;--line:#21433f;--gold:#f0c35a;--acc:#4fd1a5;--accT:#062119;--ok:#4fd1a5;--bar:#1d3b3b}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100%;background:linear-gradient(180deg,color-mix(in srgb,var(--z0,transparent) 55%,var(--bg)) 0,var(--bg) 440px) no-repeat,var(--bg);color:var(--ink);font:16px/1.45 Nunito,system-ui,sans-serif}
+h1,h2,h3{font-family:Marcellus,Georgia,serif;font-weight:400;margin:0}
+main{max-width:520px;margin:0 auto;padding:12px 14px 100px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.scene{border-radius:22px 22px 14px 14px;padding:16px;color:#fff;text-shadow:0 1px 3px #0007}
+.sc{font-size:24px;letter-spacing:8px;margin:6px 0 2px}
+.hero{display:flex;gap:14px;align-items:center;margin-top:8px}
+.av{width:80px;height:80px;border-radius:50%;display:grid;place-items:center;font-size:44px;background:#0003;border:3px solid var(--aura);box-shadow:0 0 20px var(--aura);cursor:pointer;flex:none;text-shadow:none}
+.bar{height:10px;background:var(--bar);border-radius:9px;overflow:hidden}
+.scene .bar{background:#0005}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#ffe08a);border-radius:9px;transition:width .5s}
+.btn{border:0;border-radius:10px;padding:10px 14px;font:800 14px Nunito,sans-serif;background:var(--acc);color:var(--accT);cursor:pointer}
+.btn:focus-visible,.chip:focus-visible,nav button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;gap:8px;align-items:center}
+.wrap{flex-wrap:wrap}
+.sp{flex:1;min-width:0}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:20px;padding:8px 12px;font:700 14px Nunito,sans-serif;cursor:pointer}
+.chip.on{background:var(--acc);color:var(--accT);border-color:var(--acc)}
+.chip.off{opacity:.5}
+.cls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.cls .chip{border-radius:12px;text-align:left}
+.cls small{font-weight:400}
+.mute{color:var(--mute);font-size:14px}
+.q{display:flex;gap:10px;align-items:center;padding:9px 0}
+.q+.q{border-top:1px solid var(--line)}
+.wk{display:flex;justify-content:space-between;margin-top:8px}
+.wk span{width:34px;text-align:center;font-size:12px;color:var(--mute)}
+.wk i{display:block;width:24px;height:24px;margin:3px auto 0;border-radius:50%;background:var(--bar)}
+.wk i.on{background:var(--gold)}
+input{width:100%;margin-top:8px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:700 16px Nunito,sans-serif}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav button{flex:1;border:0;background:none;color:var(--mute);padding:10px 0 8px;font:800 12px Nunito,sans-serif;cursor:pointer}
+nav button b{display:block;font-size:22px;font-weight:400}
+nav button.on{color:var(--acc)}
+#toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;font-weight:800;opacity:0;pointer-events:none;transition:.3s;max-width:90%;text-align:center;z-index:9}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast.big{background:var(--gold);color:#1a1200;font:400 18px Marcellus,Georgia,serif}
+.fx{position:fixed;font-size:28px;pointer-events:none;z-index:10;animation:fly 1.4s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--dx),-240px) rotate(var(--r));opacity:0}}
+@media(prefers-reduced-motion:reduce){.fx{display:none}.bar i,#toast{transition:none}}
+.avw{position:relative;flex:none;margin-right:18px}
+.acc{position:absolute;top:-12px;right:-8px;font-size:26px;text-shadow:none}
+.pet{position:absolute;bottom:-8px;right:-26px;font-size:28px;text-shadow:none}
+.zz{position:absolute;top:-8px;left:-8px;font-size:22px;text-shadow:none}
+.av.tired{filter:grayscale(.9);box-shadow:none}
+.stat{background:#0005;border-radius:12px;padding:2px 9px;font-size:14px;font-weight:800}
+.chip.go{background:var(--acc);color:var(--accT);border-color:var(--acc);padding:10px 18px;font-size:15px}
+.chip.go2{color:var(--acc);border:2px solid var(--acc)}
+.chip.ico.on{outline:3px solid var(--gold);outline-offset:1px}
+.chip:disabled{cursor:default}
+.q.done{background:color-mix(in srgb,var(--ok) 14%,transparent);border-radius:10px;padding-left:8px;padding-right:8px}
+.ok{color:var(--ok)}
+.warn{border:2px solid #c0392b}
+.wk i.on{display:grid;place-items:center;color:#2a1a00;font:800 14px Nunito,sans-serif}
+.rk{display:flex;gap:12px;align-items:center;padding:10px;border-radius:12px;margin-top:8px;border:1px solid var(--line)}
+.rk .em{font-size:28px;width:46px;height:46px;display:grid;place-items:center;border-radius:50%;background:var(--bar);flex:none}
+.rk.cur{border:2px solid var(--gold);background:var(--bar)}
+.rk.lock b{opacity:.75}
+.fly{position:fixed;transform:translate(-50%,0);font:800 22px Nunito,sans-serif;color:#ffd166;text-shadow:0 1px 4px #000c;pointer-events:none;z-index:11;animation:rise 1s ease-out forwards}
+@keyframes rise{to{transform:translate(-50%,-90px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.fly{display:none}}
+.card{box-shadow:0 3px 0 var(--line);transition:transform .1s,box-shadow .1s}
+.card:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.chip,.btn{transition:transform .1s}
+.chip:active,.btn:active{transform:scale(.92)}
+.chip.go:disabled{opacity:.45}
+.bump{animation:bump .45s}
+@keyframes bump{40%{transform:scale(1.14)}}
+.bar i{position:relative;overflow:hidden}
+.bar i::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,#fffb 50%,transparent 70%);transform:translateX(-100%);animation:shine 2.6s infinite}
+@keyframes shine{to{transform:translateX(100%)}}
+#lore{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:24px;z-index:20}
+.lc{background:var(--card);border:2px solid var(--gold);border-radius:18px;padding:22px;text-align:center;max-width:380px}
+.lc p{line-height:1.5}
+@media(prefers-reduced-motion:reduce){.bar i::after,.bump{animation:none}}
+.chip:disabled{opacity:.5}
+.scene{position:relative;overflow:hidden}
+.scene>:not(.cl){position:relative}
+.cl{position:absolute;top:34px;left:-120px;width:90px;height:26px;border-radius:30px;background:#fff;opacity:.22;animation:drift 38s linear infinite}
+.cl::after{content:"";position:absolute;left:18px;top:-12px;width:44px;height:30px;border-radius:50%;background:#fff}
+.cl.c2{top:84px;animation-duration:58s;animation-delay:-24s;opacity:.14;transform:scale(.7)}
+@keyframes drift{from{left:-120px}to{left:100%}}
+.eye{animation:blink 4.5s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.aur{animation:pulse 2.4s ease-in-out infinite;transform-origin:center}
+@keyframes pulse{50%{opacity:.5;transform:scale(1.08)}}
+@keyframes bump{40%{transform:translateY(-14px) scale(1.1)}}
+textarea{width:100%;margin-top:8px;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:12px monospace}
+@media(prefers-reduced-motion:reduce){.cl,.eye,.aur{animation:none}}
+#chat,#dlg{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+.dl,.chat{width:100%;max-width:420px}
+.chat{display:flex;flex-direction:column;gap:10px;max-height:85vh;text-align:left}
+#cm{overflow:auto;display:flex;flex-direction:column;gap:8px;min-height:160px;max-height:45vh}
+.cb{max-width:82%;padding:8px 12px;border-radius:14px;animation:pop .25s}
+.cb.y{background:var(--bar);align-self:flex-start;border-bottom-left-radius:4px}
+.cb.u{background:var(--acc);color:var(--accT);align-self:flex-end;border-bottom-right-radius:4px}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.bub{background:var(--bar);padding:12px;border-radius:14px;margin:10px 0;text-align:left}
+.col{display:flex;flex-direction:column;gap:8px}
+.yb{animation:ybounce 1.2s ease-in-out infinite}
+@keyframes ybounce{50%{transform:translateY(-4px)}}
+@media(prefers-reduced-motion:reduce){.yb,.cb{animation:none}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav>
+<button data-t="home"><b>🏕️</b>Adventure</button>
+<button data-t="skills"><b>📜</b>Skills</button>
+<button data-t="hero"><b>🛡️</b>Character</button>
+</nav>
+<div id="toast" role="status"></div>
+<div id="lore"></div>
+<div id="chat"></div>
+<div id="dlg"></div>
+<script>
+const $=s=>document.querySelector(s),K='levelup.v1';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const CL={
+warrior:['⚔️','Warrior','Strength through discipline',['Iron Stance','Battle Cry','Second Wind',"Titan's Will"],'🦸'],
+mage:['🔮','Mage','Power through knowledge',['Spark of Insight','Mind Bolt','Arcane Focus','Starfall'],'🧙'],
+monk:['🧘','Monk','Mastery through stillness',['Still Water','Bamboo Step','Inner Flame','Thousand Breaths'],'🥋'],
+ranger:['🏹','Ranger','Freedom through exploration',['Keen Eye','Silent Step','Wind Arrow','Pathfinder'],'🧝']};
+const DEF=[['focus','📚','Focus & Study'],['body','💪','Body & Fitness'],['lang','🗣️','Languages'],['create','🎨','Creativity'],['calm','🌿','Calm & Mind']];
+const ICONS=['📖','🎸','💻','🏃','🧠','✍️','🍎','💧','🌱','🎯'];
+const AURA=['#ffd166','#7bdff2','#b388ff','#ff8fab','#95e1a3'];
+const TITLES=[[1,'Novice of the Quiet Road'],[2,'Apprentice of the Lantern'],[3,'Disciple of the Bamboo Gate'],[5,'Wanderer of the Jade Path'],[7,'Keeper of the Iron Will'],[9,'Master of the Mountain Temple'],[12,'Sage of the Silent Peak'],[15,'Legend of the Eternal Dawn']];
+const ZONES=[[1,'Sleepy Village','🏡🌾🐓','#2f6b4f,#10302d'],[3,'Bamboo Grove','🎋🐼🎍','#1f7a5c,#0d2b2b'],[5,'Misty Mountains','⛰️🌫️🦅','#3a6f86,#0f2a33'],[8,'Jade Citadel','🏯🐉🏮','#8a6a1f,#1d2a22'],[11,'Sky Realm','☁️✨🌠','#4a4a9a,#0f1f33']];
+const pick=(a,l)=>a.filter(z=>z[0]<=l).pop();
+let S=load(),tab='home',rs=0,ob={cls:'monk',sk:['focus','body','lang'],ic:0};
+if(S&&!S.skills)S=null;
+function load(){try{return JSON.parse(localStorage.getItem(K))}catch(e){try{return JSON.parse(MEM[K])}catch(x){return null}}}
+function save(){const v=JSON.stringify(S);if(typeof iappyx!=='undefined'){try{iappyx.save(K,v)}catch(e){}}try{localStorage.setItem(K,v)}catch(e){MEM[K]=v}}
+const day=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+migrate();
+const hxp=()=>S.skills.reduce((a,s)=>a+s.xp,0)+S.bonus;
+const lv=(x,k)=>Math.floor(Math.sqrt(x/k))+1;
+const pct=(x,k)=>{const l=lv(x,k),b=k*(l-1)**2,n=k*l*l;return Math.round((x-b)/(n-b)*100)};
+function streak(){let n=0,d=new Date();if(!S.mins[day(d)])d.setDate(d.getDate()-1);while(S.mins[day(d)]){n++;d.setDate(d.getDate()-1)}return n}
+function toast(m,big){const t=$('#toast');t.textContent=m;t.className='show'+(big?' big':'');clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',big?3800:2200)}
+function boom(){for(let i=0;i<14;i++){const s=document.createElement('span');s.className='fx';s.textContent=['✨','⭐','🌟','💫'][i%4];s.style.cssText=`left:${20+Math.random()*60}%;top:60%;--dx:${(Math.random()-.5)*160}px;--r:${(Math.random()-.5)*360}deg`;document.body.append(s);setTimeout(()=>s.remove(),1500)}}
+
+const EMB=['🪵','🏮','🎋','🍃','🗡️','⛩️','🏔️','👑'];
+const LOOT=[[2,'👒','Straw hat','acc'],[3,'🐱','Temple cat','pet'],[4,'🕶️','Shadow shades','acc'],[6,'🪭','Jade fan','acc'],[8,'🐉','Baby dragon','pet'],[10,'👑','Sky crown','acc'],[99,'🦊','Fox companion','pet'],[99,'🥷','Ninja mask','acc'],[99,'🧢','Scout cap','acc','common'],[99,'🐸','Pond frog','pet','common'],[99,'🌸','Blossom pin','acc','common'],[99,'🦉','Wise owl','pet','rare'],[99,'🧿','Lucky charm','acc','rare'],[99,'🐲','Jade dragon','pet','epic']];
+const SHOP=[['chest','Mystery chest','A random cosmetic: common, rare or epic',50],['luck','Lucky potion','Double gold for 60 minutes',60],['tea','Healing tea','Restore 1 heart',40],['elx','Elixir of Focus','Double XP for 60 minutes',80],['fox','Fox companion','A pet that follows your hero',150],['mask','Ninja mask','Gear for your avatar',120]];
+const LORE=[
+'{n} leaves the village with a worn staff and a quiet promise. The road is long, but every step counts.',
+'The lantern keeper takes {n} in as an apprentice. "Light one small flame each day, and the dark loses ground."',
+'You earned it, {n}. The Bamboo Gate opens and its keepers bow. Your next task: practice when no one is watching.',
+'On the Jade Path, {n} learns that rest is part of training. The wanderers share their fire and their secrets.',
+'Your will is iron now, {n}. Even tired days no longer break your stride.',
+'The Mountain Temple bell rings for {n}. Masters from distant peaks come to see who walks so steadily.',
+'In the silence of the peak, {n} hears the answer: the habit was always the adventure.',
+'Legends are told of {n}, who leveled up a life one day at a time. The dawn is eternal, and so is the path.'];
+const IC={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',scroll:'<path d="M6 3h12v14a4 4 0 0 1-4 4H6a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3zM9 8h6M9 12h6"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',heart:'<path d="M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6-8 11-8 11z"/>',coin:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/>',flame:'<path d="M12 3c1 4 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z"/>',lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'};
+const svg=(n,c='currentColor',z=20,f='none')=>`<svg width="${z}" height="${z}" viewBox="0 0 24 24" fill="${f}" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px">${IC[n]}</svg>`;
+const coin=z=>svg('coin','#7a5200',z,'#ffd166');
+let pt=[innerWidth/2,innerHeight/2],AC;
+function ago(n){const d=new Date();d.setDate(d.getDate()-n);return day(d)}
+function migrate(){if(!S)return;S.hearts=S.hearts??3;S.chk=S.chk||ago(1);S.gear=S.gear||{acc:'',pet:''};S.gold=S.gold||0;S.own=S.own||{};if(S.api&&!S.aiUrl)S.aiUrl=S.api}
+function upkeep(){
+ if(S.chk>=ago(1))return;
+ const t=day(),d=new Date(S.chk+'T12:00:00');
+ for(let i=0;i<40;i++){d.setDate(d.getDate()+1);if(day(d)>=t)break;if(!S.mins[day(d)]){S.hearts=Math.max(0,S.hearts-1);S.gold=Math.max(0,S.gold-10);S.miss=(S.miss||0)+1}else S.miss=0}
+ if((S.miss||0)>=3)S.sick=t;
+ S.chk=ago(1);save();
+}
+function snd(a){if(S.mute)return;try{AC=AC||new AudioContext();a.forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+i*.09;o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.25);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+.3)})}catch(e){}}
+function fly(t){const s=document.createElement('span');s.className='fly';s.textContent=t;s.style.cssText=`left:${pt[0]}px;top:${pt[1]}px`;document.body.append(s);setTimeout(()=>s.remove(),1000)}
+function spark(){for(let i=0;i<8;i++){const s=document.createElement('span');s.className='fx';s.textContent='✦';s.style.cssText=`left:${pt[0]}px;top:${pt[1]}px;color:#ffd166;font-size:18px;--dx:${(Math.random()-.5)*120}px;--r:${Math.random()*180}deg`;document.body.append(s);setTimeout(()=>s.remove(),1500)}}
+function showLore(i){const o=$('#lore');o.innerHTML=`<div class="lc"><div style="font-size:44px">${EMB[i]}</div><h2>${TITLES[i][1]}</h2><p>${esc(LORE[i]).replace('{n}',esc(S.name))}</p><p class="mute">Choose your path:</p><div class="row wrap" style="justify-content:center"><button class="btn" data-ch="g">Help with the harvest, +60 gold</button><button class="btn" data-ch="x">Train with the sword, +60 XP</button></div></div>`;o.style.display='flex'}
+function rank(){const x=hxp(),l=lv(x,120),t=pick(TITLES,l),i=TITLES.indexOf(t),nx=TITLES[i+1],s0=120*(t[0]-1)**2,s1=nx?120*(nx[0]-1)**2:0;return{x,l,t,i,nx,s1,need:s1-x,p:nx?Math.round((x-s0)/(s1-s0)*100):100}}
+function quests(){const n=Math.floor(new Date().setHours(12,0,0,0)/864e5),L=lv(hxp(),120),a=S.skills.filter(s=>(s.ul||1)<=L),A=[15,45,10,30,20,40,25],o=[];for(let i=0;i<Math.min(3,a.length);i++){const s=a[(n+i)%a.length],ch=i==2&&a.length>2,m=A[(n*2+i*3)%7];o.push({id:s.id,m:ch?Math.max(m,20):m,ch,tag:ch?'Challenge, one go with no stopping':m<=10?'Quick win':m>=40?'Deep dive':'Steady',story:STORY[s.id]||'Practice '+s.name,name:s.name,icon:s.icon})}return o}
+function wkKey(d=new Date()){const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return day(x)}
+function wkMins(){const k=wkKey();let n=0;for(const d in S.mins)if(wkKey(new Date(d+'T12:00:00'))===k)n+=Object.values(S.mins[d]).reduce((a,b)=>a+b,0);return n}
+const WKT=()=>Math.round([150,200,240,180][Math.floor(new Date(wkKey()+'T12:00:00')/6048e5)%4]*(S.wkc&&S.wkc.k===wkKey()?(S.wkc.m==='m'?1.3:.7):1));
+const WKR=()=>S.wkc&&S.wkc.k===wkKey()?(S.wkc.m==='m'?150:70):100;
+const totMin=()=>Object.values(S.mins).reduce((a,d)=>a+Object.values(d).reduce((p,n)=>p+n,0),0);
+const ACH=[['m100','First 100 minutes','Log 100 minutes in total',()=>totMin()>=100],['wk7','Unbroken week','Reach a 7-day streak',()=>(S.best||0)>=7],['q10','Quest hunter','Complete 10 quests',()=>(S.qd||0)>=10],['buy5','Collector','Buy 5 items in the shop',()=>(S.buys||0)>=5],['chest','Lucky find','Open a mystery chest',()=>(S.chests||0)>=1]];
+function chkAch(){let r='';S.ach=S.ach||[];ACH.forEach(a=>{if(a[3]()&&!S.ach.includes(a[0])){S.ach.push(a[0]);r+=` Achievement: ${a[1]}!`}});return r}
+function setTitle(k){S.ttl=S.ttl===k?'':k;save();render()}
+function upgrade(id){const s=S.skills.find(x=>x.id===id);if(!s)return;const c=100*((s.up||0)+1);if((s.up||0)>=5||S.gold<c)return;S.gold-=c;s.up=(s.up||0)+1;save();render();snd([784,1047]);toast(`${s.name} upgraded: +${10*s.up}% XP`)}
+const STORY={focus:'Help the Sage sort his library',body:'Train with the temple guards',lang:"Translate the traveler's old letter",create:'Paint a banner for the village festival',calm:'Tend the moonlit garden in silence'};
+function hero(){
+ const col={warrior:'#c4503a',mage:'#5b4bd1',monk:'#d99a2b',ranger:'#2f8f5b'}[S.cls],tired=!S.hearts,insp=S.insp===day();
+ const hat={warrior:`<path d="M30 42q20-12 40 0v5q-20-9-40 0z" fill="#c4503a"/>`,mage:`<path d="M27 42L50 4l23 38z" fill="#5b4bd1"/><ellipse cx="50" cy="42" rx="27" ry="5" fill="#4637a8"/>`,monk:`<circle cx="50" cy="22" r="7" fill="#2a1d14"/><path d="M31 44q19-20 38 0v-5q-19-18-38 0z" fill="#2a1d14"/>`,ranger:`<path d="M27 56q-2-34 23-34t23 34q-5-18-23-18T27 56z" fill="#2f8f5b"/>`}[S.cls];
+ const eyes=tired?`<path d="M35 50q5 4 10 0M55 50q5 4 10 0" stroke="#3a2a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>`:`<circle class="eye" cx="40" cy="49" r="3" fill="#3a2a1a"/><circle class="eye" cx="60" cy="49" r="3" fill="#3a2a1a"/>`;
+ const mouth=tired?`<path d="M43 62h14" stroke="#3a2a1a" stroke-width="2.5" stroke-linecap="round"/>`:`<path d="M42 59q8 7 16 0" stroke="#3a2a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+ return `<svg width="76" height="76" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="ga"><stop offset="50%" stop-color="#ffd166" stop-opacity=".9"/><stop offset="100%" stop-color="#ffd166" stop-opacity="0"/></radialGradient></defs>${insp?'<circle class="aur" cx="50" cy="50" r="48" fill="url(#ga)"/>':''}<path d="M20 100q0-30 30-30t30 30z" fill="${col}"/><rect x="36" y="86" width="28" height="5" fill="#0003"/><circle cx="50" cy="49" r="20" fill="#f2c9a0"/>${hat}${eyes}${mouth}</svg>`}
+function evt(){const t=day();if(S.ev&&S.ev.d===t)return S.ev;const n=Math.floor(new Date().setHours(12,0,0,0)/864e5);return S.ev={d:t,type:n%10==3?'dragon':n%2?'chest':'band',st:'open'}}
+function evAct(a){const e=evt();
+ if(a==='skip')e.st='skip';
+ else if(a==='acc')e.st='acc';
+ else{e.st='done';const R=Math.random();
+  if(R<.55){const g=30+Math.floor(Math.random()*51);S.gold+=g;snd([784,1047,1319]);toast(`Treasure! +${g} gold`,true)}
+  else if(R<.8)toast('The chest is empty. Better luck tomorrow.');
+  else{S.gold=Math.max(0,S.gold-20);if(S.hearts>1)S.hearts--;toast('A trap! You lose 20 gold and a heart.')}}
+ save();render()}
+function choose(k){if(k==='g')S.gold+=60;else S.bonus+=60;$('#lore').style.display='none';save();render();snd([659,784]);toast(k==='g'?'The villagers thank you. +60 gold':'Your blade grows sharper. +60 XP')}
+function impt(){try{const o=JSON.parse(decodeURIComponent(escape(atob($('#bk').value.trim()))));if(!o.skills||!o.name)throw 0;S=o;migrate();save();render();toast('Progress restored')}catch(e){toast('That code is not valid')}}
+const MEM={};
+const MER=[['chest','Mystery chest',50],['luck','Lucky potion',60],['elx','Elixir of Focus',80],['tea','Healing tea',40]];
+const YM={happy:['You did it, {n}! I knew you could.','Look at you go! Every minute counts, and today it showed.'],calm:['Hi {n}! A small practice today would make me really happy.','Ready when you are. Even 10 minutes is a win.'],sad:['I missed you, {n}. Come back for a few minutes? I will be right here.','Slow days happen. Let us restart gently.'],worry:['Bandits are near the village! I am worried. Can you help?','Oh no, the bandits... please be careful, {n}!']};
+const YR=['Believe in the tiny steps. They add up.','You are building something real, one day at a time.','Breathe, then start. I am cheering for you!','Progress, not perfection, {n}.','Your future self is already thankful.','Rest is part of the quest too. Be kind to yourself.'];
+const YQ={hi:'How am I doing?',mot:'Motivate me',tip:'What should I do today?'};
+const DLG={
+sage:{n:'The Sage',e:'🧙',st:()=>S.wkc&&S.wkc.k===wkKey()?'again':'start',s:{
+ start:{t:'Welcome, {n}. Every journey is a week of small steps. Which path will you walk?',o:[['Gentle path: 70% target, 70 XP and gold','g'],['Master path: 130% target, 150 XP and gold','m'],['Ask for advice','adv']]},
+ g:{t:'Wise. Steady steps outlast fast ones. Come back when the week is done.',act:'sage:g'},
+ m:{t:'Bold! Few dare. The mountain remembers those who climb it.',act:'sage:m'},
+ adv:{t:'Do small things daily. Rest when your hearts run low. Then choose your path.',o:[['I will choose now','start'],['Thank you','end']]},
+ again:{t:'You have chosen your path this week, {n}. Walk it well.',o:[['I will','end']]}}},
+mer:{n:'The Merchant',e:'🧳',st:()=>S.mer&&S.mer.d===day()&&S.mer.st==='done'?'sold':'start',s:{
+ start:{t:()=>{const m=mer();return `Ah, {n}! Today only: ${m.n} for ${m.p} gold. A fine deal.`},o:[['Buy it','buy'],['Haggle','haggle'],['No thanks','bye']]},
+ buy:{act:'mer:buy'},haggle:{act:'mer:haggle'},
+ hok:{t:'Hmm... you drive a hard bargain. Fine, {n}, a better price just for you.',o:[['Buy it','buy'],['No thanks','bye']]},
+ hno:{t:'Ha! Haggling insults an honest merchant. The price goes up a little.',o:[['Buy anyway','buy'],['No thanks','bye']]},
+ hdone:{t:'I do not haggle twice, {n}.',o:[['Buy it','buy'],['No thanks','bye']]},
+ bought:{t:'A pleasure doing business! Come back tomorrow for something new.',o:[['Farewell','end']]},
+ poor:{t:'Come back when your purse is heavier, {n}.',o:[['I will','end']]},
+ nope:{t:'That would not help you right now. Choose wisely, {n}.',o:[['Farewell','end']]},
+ sold:{t:'You already bought today. Tomorrow, new wares!',o:[['Farewell','end']]},
+ bye:{t:'Your loss. The offer lasts until midnight.',o:[['Farewell','end']]}}},
+grd:{n:'The Guard',e:'💂',st:()=>S.grd&&S.grd.d===day()?'busy':'start',s:{
+ start:{t:'Halt, {n}. One more minute can change a whole day. Care for a challenge?',o:[['Easy: log any practice today, 25 gold','e'],['Bold: bet 20 gold, log 30+ minutes in one go to win 70','b'],['Not now','no']]},
+ e:{t:'Good. No stalling, soldier. I will pay when it is done.',act:'grd:e'},
+ b:{act:'grd:b'},
+ boldok:{t:'A gambler! Thirty minutes in one go, and the purse is yours.',o:[['Challenge accepted','end']]},
+ poor:{t:'You cannot cover the bet, {n}. Try the easy one.',o:[['Alright','start'],['Leave','end']]},
+ no:{t:'The village will need you soon enough.',o:[['Farewell','end']]},
+ busy:{t:'You have a challenge pending today. Go earn it!',o:[['On my way','end']]}}}};
+let dn='';
+function mer(){const t=day();if(S.mer&&S.mer.d===t)return S.mer;const n=Math.floor(new Date().setHours(12,0,0,0)/864e5),it=MER[n%4];return S.mer={d:t,k:it[0],n:it[1],p:Math.round(it[2]*(.6+(n%3)*.1)),h:0,st:'open'}}
+function dact(a){const t=day();
+ if(a==='sage:g'||a==='sage:m')S.wkc={k:wkKey(),m:a[5]};
+ else if(a==='mer:buy'){const m=mer();if(m.st==='done')return 'sold';if(m.k==='tea'&&S.hearts>=3)return 'nope';if(S.gold<m.p)return 'poor';buy(m.k,m.p);m.st='done';return 'bought'}
+ else if(a==='mer:haggle'){const m=mer();if(m.h)return 'hdone';m.h=1;if(Math.random()<.5){m.p=Math.round(m.p*.8);return 'hok'}m.p=Math.round(m.p*1.1);return 'hno'}
+ else if(a==='grd:e')S.grd={d:t,st:'acc',bold:0};
+ else if(a==='grd:b'){if(S.gold<20)return 'poor';S.gold-=20;S.grd={d:t,st:'acc',bold:1};return 'boldok'}
+ save()}
+function dopen(k){dn=k;dshow(DLG[k].st())}
+function dshow(id){
+ const N=DLG[dn],nd=N.s[id];
+ if(nd.act){const r=dact(nd.act);if(r)return dshow(r)}
+ const t=typeof nd.t==='function'?nd.t():nd.t,o=$('#dlg');
+ o.innerHTML=`<div class="lc dl"><div style="font-size:40px">${N.e}</div><h3>${N.n}</h3><div class="bub">${esc(t).replace('{n}',esc(S.name))}</div><div class="col">${(nd.o||[['Farewell','end']]).map(x=>`<button class="chip go" data-d="${x[1]}">${x[0]}</button>`).join('')}</div></div>`;
+ o.style.display='flex';
+}
+function dgo(id){if(id==='end'){$('#dlg').style.display='none';save();render();return}dshow(id)}
+function ymood(){const t=day(),m=S.mins[t];
+ if(S.ev&&S.ev.d===t&&S.ev.st==='open'&&S.ev.type!=='chest')return 'worry';
+ if(S.sick===t||!S.hearts||(S.miss||0)>=2)return 'sad';
+ if((S.claimed[t]||[]).length||S.insp===t||S.ygd===t||(m&&Object.keys(m).length))return 'happy';
+ return 'calm'}
+function yuki(md,z){
+ const ink='#4a2a3a',E={happy:`<path d="M35 50q5-6 10 0M55 50q5-6 10 0" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round"/>`,sad:`<circle class="eye" cx="40" cy="50" r="3" fill="${ink}"/><circle class="eye" cx="60" cy="50" r="3" fill="${ink}"/><path d="M40 56q-2 6 0 9" stroke="#7bdff2" stroke-width="3" fill="none" stroke-linecap="round"/>`,worry:`<circle cx="40" cy="51" r="3.5" fill="${ink}"/><circle cx="60" cy="51" r="3.5" fill="${ink}"/><path d="M33 43l11-4M67 43l-11-4" stroke="${ink}" stroke-width="2.5" stroke-linecap="round"/>`,calm:`<circle class="eye" cx="40" cy="50" r="3" fill="${ink}"/><circle class="eye" cx="60" cy="50" r="3" fill="${ink}"/>`}[md],M={happy:'M40 60q10 10 20 0',sad:'M42 67q8-7 16 0',worry:'M43 65q7-3 14 0',calm:'M42 61q8 5 16 0'}[md];
+ return `<svg width="${z}" height="${z}" viewBox="0 0 100 100" class="${md==='happy'?'yb':''}" aria-hidden="true"><path d="M16 100q0-28 34-28t34 28z" fill="#ff8fab"/><circle cx="50" cy="46" r="31" fill="#ff9ec4"/><circle cx="50" cy="52" r="22" fill="#fbd5b5"/><path d="M26 52q0-28 24-28t24 28q-6-16-24-16T26 52z" fill="#ff9ec4"/>${E}<path d="${M}" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round"/>${md==='happy'?'<path class="aur" d="M82 18l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#ffd166"/>':''}</svg>`}
+function yrep(k){const t=day(),cl=(S.claimed[t]||[]).length;
+ if(k==='mot')return YR[Math.floor(Math.random()*YR.length)];
+ if(k==='tip'){const q=quests().find(q=>!(S.claimed[t]||[]).includes(q.id));return q?`Try this: ${q.story}. About ${q.m} minutes. I believe in you!`:'All quests are done! Maybe a little rest, or a chest to open?'}
+ if(S.sick===t)return 'You look unwell, {n}. Rest first. No gold today, but no guilt either.';
+ if(!S.hearts)return 'You are exhausted, {n}. One small quest restores a heart. I will wait.';
+ if(S.insp===t)return 'You are glowing today! Inspired days are perfect for a big session.';
+ if(cl)return `You finished ${cl} quest${cl>1?'s':''} today! I am so proud of you, {n}!`;
+ const a=YM[ymood()];return a[Math.floor(Math.random()*a.length)]}
+const yn=()=>S.yn||'Yuki';
+const GIFTS=[['🌸','Flower',15,3],['📖','Book',30,7],['🍵','Tea set',40,10]];
+let rnm=0;
+function cpush(w,t){S.chat=(S.chat||[]).concat([[w,t]]).slice(-80);save()}
+function cshow(busy){const md=ymood(),bl=Math.floor((S.bond||0)/30)+1;
+ $('#chat').innerHTML=`<div class="lc chat"><div class="row">${yuki(md,48)}<div class="sp"><b>${esc(yn())}</b><div class="mute">${{happy:'Happy',calm:'Calm',sad:'Missing you',worry:'Worried'}[md]}, friendship level ${bl}</div></div><button class="chip" data-act="cx">Close</button></div><div id="cm">${S.chat.map(m=>`<div class="cb ${m[0]}">${esc(m[1]).replace('{n}',esc(S.name))}</div>`).join('')}${busy?'<div class="cb y">...</div>':''}</div><div class="row"><input id="ci" maxlength="300" placeholder="Say something" style="margin:0"><button class="btn" data-act="send">Send</button></div><div class="row wrap">${Object.keys(YQ).map(k=>`<button class="chip" data-y="${k}">${YQ[k]}</button>`).join('')}</div><div class="row wrap">${GIFTS.map((g,i)=>`<button class="chip go2" data-g="${i}" ${S.gold<g[2]?'disabled':''}>${g[0]} ${g[1]} ${coin(14)} ${g[2]}</button>`).join('')}<button class="chip" data-act="rn">Rename</button></div></div>`;
+ const c=$('#cm');c.scrollTop=c.scrollHeight}
+function copen(){if(!(S.chat||[]).length)cpush('y',yrep('hi'));cshow();$('#chat').style.display='flex'}
+function cask(k){cpush('u',YQ[k]);cpush('y',yrep(k));cshow()}
+function ygift(i){const g=GIFTS[i];if(S.gold<g[2])return;S.gold-=g[2];const b0=Math.floor((S.bond||0)/30);S.bond=(S.bond||0)+g[3];S.yg=S.yg||{};S.yg[g[1]]=(S.yg[g[1]]||0)+1;S.ygd=day();
+ let t=`${g[0]} Thank you, {n}! I love it.`;
+ if(Math.floor(S.bond/30)>b0){S.gold+=25;t+=' Our friendship grew! Here, I found 25 gold for you.'}
+ cpush('u',`(gives you a ${g[1].toLowerCase()})`);cpush('y',t);snd([784,988,1319]);render();cshow()}
+function yukiSystem(){const t=day(),cl=(S.claimed[t]||[]).length;
+ return `You are ${yn()}, a warm, playful companion character in a habit-building RPG called Level Up. You are a supportive friend who cheers the player on, not a romantic partner: if asked, kindly say you are their friend and biggest fan. Never guilt-trip or shame the player about absences. Encourage rest, and real-life friends and family when it fits. If they seem to be in real distress, respond with care and suggest talking to someone they trust. Do not claim to be human. Reply in 1 to 3 short sentences, in the language the player writes in, and refer naturally to what you remember (for example, something they told you earlier).
+Player: ${S.name}, ${CL[S.cls][1]}, level ${lv(hxp(),120)}, streak ${streak()} days, hearts ${S.hearts} of 3, quests done today ${cl}. Your mood now: ${ymood()}. Friendship level ${Math.floor((S.bond||0)/30)+1}. Gifts they gave you: ${JSON.stringify(S.yg||{})}. Today is ${t}. Your last chat was on ${S.ylast||'never'}.
+What you remember about the player: ${S.ymem||'nothing yet'}`}
+function yukiHistory(){const h=(S.chat||[]).slice(-13,-1).map(m=>({role:m[0]==='u'?'user':'assistant',content:m[1]}));while(h.length&&h[0].role==='assistant')h.shift();return h}
+function buildYukiContext(v){return [{role:'system',content:yukiSystem()}].concat(yukiHistory(),[{role:'user',content:v}])}
+function yprompt(v){return yukiSystem()+'\nRecent conversation:\n'+yukiHistory().map(m=>(m.role==='user'?S.name:yn())+': '+m.content).join('\n')+`\n${S.name}: ${v}\n${yn()}:`}
+
+function bridgeAvailable(){return typeof iappyx!=='undefined'&&!!iappyx.httpClient&&typeof iappyx.httpClient.request==='function'}
+// Sends chat messages to the proxy in S.aiUrl. It uses the native iappyxOS bridge, because web requests cannot leave a file:// page.
+// The proxy receives {messages, temperature, max_tokens} and returns {choices:[{message:{content}}]}.
+function aiChat(messages,opts){
+ return new Promise((resolve,reject)=>{
+  const url=S&&S.aiUrl;
+  if(!url){reject(new Error('no proxy url'));return}
+  const payload={messages:messages,temperature:(opts&&opts.temperature)??0.8,max_tokens:(opts&&opts.max_tokens)||220};
+  const readBody=body=>{try{const t=JSON.parse(body).choices[0].message.content;if(!t)throw 0;resolve(String(t).trim())}catch(e){reject(new Error('bad response'))}};
+  if(bridgeAvailable()){
+   const id='ai_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+   window._iappyxCb=window._iappyxCb||{};
+   const timer=setTimeout(()=>{delete window._iappyxCb[id];reject(new Error('timeout'))},30000);
+   window._iappyxCb[id]=function(r){clearTimeout(timer);if(!r||!r.ok||r.status>=400)reject(new Error((r&&r.error)||'http '+(r&&r.status)));else readBody(r.body)};
+   try{iappyx.httpClient.request(JSON.stringify({url:url,method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),timeout:25000}),id)}
+   catch(e){clearTimeout(timer);delete window._iappyxCb[id];reject(e)}
+  }else{
+   reject(new Error('iappyx bridge not available'))
+  }
+ })
+}
+async function askModel(messages,flat){
+ if(S.aiUrl)return aiChat(messages);
+ if(typeof claude==='undefined')throw new Error('no ai');
+ const sm=await claude.use('sample');if(!sm)throw new Error('no ai');
+ return (await sm(flat,{cache:false})).text.trim()}
+async function csend(){
+ const i=$('#ci'),v=i.value.trim();if(!v)return;
+ if(rnm){rnm=0;S.yn=v.slice(0,16);save();render();cshow();return}
+ cpush('u',v);S.bond=(S.bond||0)+1;cshow(1);
+ let r;
+ try{r=await askModel(buildYukiContext(v),yprompt(v))}catch(e){r=yrep('hi');if(S.aiUrl)toast('Yuki could not reach her AI, so she answered offline')}
+ cpush('y',r||yrep('hi'));S.ylast=day();cshow();ysum();
+}
+async function ysum(){
+ S.ycnt=(S.ycnt||0)+1;if(S.ycnt%5)return;
+ const recent=(S.chat||[]).slice(-12).map(m=>(m[0]==='u'?S.name:yn())+': '+m[1]).join('\n');
+ const task=`Update the memory notes about the player ${S.name}. Keep durable facts, feelings they shared, plans and preferences, with dates (today is ${day()}). Maximum 700 characters, plain text, no preface.\nCurrent notes: ${S.ymem||'none'}\nNew conversation:\n${recent}`;
+ try{const r=await askModel([{role:'system',content:'You maintain concise memory notes about a user for a companion character. Reply with the updated notes only.'},{role:'user',content:task}],task);S.ymem=r.slice(0,800);save()}catch(e){console.warn('Yuki memory update failed',e)}}
+function showEnd(){const o=$('#lore');o.innerHTML=`<div class="lc"><div style="font-size:48px">👑</div><h2>The Kingdom is Saved</h2><p>${esc(S.name)}, the Eternal Dawn rises because of the habits you built, one day at a time. Your story is complete, but the path never ends.</p><div class="col"><button class="btn" data-act="ng">Begin New Game+ (+10% XP forever)</button><button class="chip" data-act="lore">Keep playing</button></div></div>`;o.style.display='flex'}
+function ngPlus(){S.skills.forEach(k=>k.xp=0);S.bonus=0;S.hearts=3;S.ng=(S.ng||0)+1;$('#lore').style.display='none';save();render();toast(`New Game+ ${S.ng}: XP bonus +${10*S.ng}%`,true)}
+function equip(i){const it=LOOT[+i];S.gear[it[3]]=S.gear[it[3]]===it[1]?'':it[1];save();render()}
+function buy(k,pr){
+ const it=SHOP.find(x=>x[0]===k),P=pr??(it?it[3]:0);if(!it||S.gold<P)return toast('Not enough gold');
+ if(k==='chest'){S.gold-=P;const R=Math.random(),rar=R<.1?'epic':R<.4?'rare':'common',pool=LOOT.filter(l=>l[4]===rar),l=pool[Math.floor(Math.random()*pool.length)];let m2=`${rar.toUpperCase()}: ${l[1]} ${l[2]}`;if(S.own[l[1]]){S.gold+=20;m2+=' (duplicate, 20 gold back)'}else{S.own[l[1]]=1;S.gear[l[3]]=l[1]}S.chests=(S.chests||0)+1;S.buys=(S.buys||0)+1;m2+=chkAch();save();render();snd([659,784,1047,1319]);toast(m2,rar!=='common');return}
+ if(k==='tea'){if(S.hearts>=3)return toast('Your hearts are already full');S.hearts++}
+ else if(k==='elx')S.xp2=Math.max(Date.now(),S.xp2||0)+36e5;
+ else if(k==='luck')S.gd=Math.max(Date.now(),S.gd||0)+36e5;
+ else{const l=LOOT.find(i=>i[2]===it[1]);if(S.own[l[1]])return toast('Already owned');S.own[l[1]]=1;S.gear[l[3]]=l[1]}
+ S.gold-=P;S.buys=(S.buys||0)+1;const ac=chkAch();save();render();snd([784,1047]);toast(`Bought ${it[1]}.`+ac);
+}
+
+function practice(id,m){
+ const sk=S.skills.find(x=>x.id===id);if(!sk)return;
+ const t=day(),st=streak(),hl=lv(hxp(),120),sl=lv(sk.xp,50),tired=!S.hearts,bo=Date.now()<(S.xp2||0);
+ const g=Math.round(m*2*(1+Math.min(.5,st*.1))*(tired?.5:1)*(bo?2:1)*(1+.1*(sk.up||0))*(S.insp===t?1.2:1)*(1+.1*(S.ng||0))),au=S.sick===t?0:Math.round(m/5*(Date.now()<(S.gd||0)?2:1));
+ sk.xp+=g;S.gold+=au;
+ const dm=S.mins[t]=S.mins[t]||{};dm[id]=(dm[id]||0)+m;
+ const cl=S.claimed[t]=S.claimed[t]||[];
+ let msg=`+${g} XP, +${au} gold`+(tired?' (exhausted: half XP)':bo?' (Elixir: double XP)':''),qd=0;
+ quests().forEach(q=>{if(cl.includes(q.id)||!(q.ch?id===q.id&&m>=q.m:(dm[q.id]||0)>=q.m))return;const x=q.ch?2:1;cl.push(q.id);S.bonus+=30*x;S.gold+=S.sick===t?0:20*x;qd++;S.qd=(S.qd||0)+1;msg+=q.ch?', challenge complete! double reward':', quest complete!'});
+ if(qd&&S.hearts<3){S.hearts++;msg+=' +1 heart'}
+ if(cl.length>=3&&S.insp!==ago(-1)){S.insp=ago(-1);msg+=', Inspired tomorrow: +20% XP'}
+ const k=wkKey();
+ if(wkMins()>=WKT()&&(S.wk||{}).k!==k){S.wk={k};const r=WKR();S.bonus+=r;S.gold+=r;msg+=`, weekly challenge complete! +${r} XP, +${r} gold`}
+ const gd=S.grd;if(gd&&gd.d===t&&gd.st==='acc'&&(gd.bold?m>=30:m>=1)){gd.st='done';const r2=gd.bold?70:25;S.gold+=r2;msg+=`, the Guard pays ${r2} gold`}
+ const dr=S.ev&&S.ev.type==='dragon';if(S.ev&&S.ev.d===t&&S.ev.st==='acc'&&m>=(dr?20:10)){S.ev.st='done';const rg=dr?100:40,rx=dr?60:40;S.gold+=rg;S.bonus+=rx;msg+=`, ${dr?'the dragon is driven away':'bandits defeated'}! +${rg} gold, +${rx} XP`}
+ S.best=Math.max(S.best||0,streak());S.miss=0;msg+=chkAch();
+ const hl2=lv(hxp(),120),sl2=lv(sk.xp,50),loot=LOOT.filter(i=>i[0]>hl&&i[0]<=hl2),un=S.skills.filter(s=>(s.ul||1)>hl&&(s.ul||1)<=hl2);
+ if(hl2>hl)S.gold+=50*(hl2-hl);
+ loot.forEach(i=>S.gear[i[3]]=i[1]);
+ save();render();fly(`+${g} XP`);spark();
+ document.querySelectorAll('.av').forEach(e=>e.classList.add('bump'));
+ if(hl2>hl){
+  boom();snd([523,659,784,1047]);
+  toast(`LEVEL ${hl2}! ${pick(TITLES,hl2)[1]}`+(loot.length?`. Loot: ${loot.map(i=>i[1]+' '+i[2]).join(', ')}`:'')+(un.length?`. Skill unlocked: ${un.map(s=>s.name).join(', ')}`:'')+'. +50 gold',true);
+  const a=TITLES.indexOf(pick(TITLES,hl)),b=TITLES.indexOf(pick(TITLES,hl2));if(hl2>=15&&hl<15)showEnd();else if(b>a)showLore(b);
+ }
+ else if(sl2>sl){boom();snd([523,659,784]);toast(`${sk.name} reached level ${sl2}!`)}
+ else{snd(qd?[523,659,784]:[523,659]);toast(msg)}
+}
+
+function avatar(){const g=S.gear,tired=!S.hearts;return `<div class="avw"><div class="av ${tired?'tired':''}" data-a="aura" title="Tap to change your aura">${hero()}</div>${g.acc?`<span class="acc">${g.acc}</span>`:''}${g.pet?`<span class="pet">${g.pet}</span>`:''}${tired?'<span class="zz">💤</span>':''}</div>`}
+
+function scene(){
+ const r=rank(),c=CL[S.cls],st=streak(),z=pick(ZONES,r.l),g=z[3].split(','),H=[0,1,2].map(i=>svg('heart',i<S.hearts?'#ff5a6e':'#ffffffaa',22,i<S.hearts?'#ff5a6e':'none')).join(' ');
+ const top=[...S.skills].filter(s=>(s.ul||1)<=r.l).sort((a,b)=>b.xp-a.xp).slice(0,3).map(s=>`<span class="stat">${s.icon} Lv ${lv(s.xp,50)}</span>`).join('');
+ return `<div class="scene" style="background:linear-gradient(170deg,${g[0]},${g[1]});--aura:${AURA[S.aura||0]}">
+<div class="cl"></div><div class="cl c2"></div>
+<div class="row"><b>📍 ${z[1]}</b><span class="sp"></span><b>${st?svg('flame','#ffd166',18,'#ffb347')+' '+st+' day'+(st>1?'s':''):'Start your streak!'}</b></div>
+<div class="sc">${z[2]}</div>
+<div class="hero">${avatar()}
+<div class="sp"><h2 style="font-size:24px">${esc(S.name)}</h2><div style="font-weight:800">${r.t[1]}</div>${S.ttl?`<div style="font-size:13px">Title: ${(ACH.find(a=>a[0]===S.ttl)||[])[1]||''}</div>`:''}
+<div style="font-size:15px">Level ${r.l} ${c[1]}</div>
+<div class="bar" style="margin-top:6px"><i style="width:${r.p}%"></i></div>
+<div style="font-size:14px;margin-top:4px">${r.nx?`${r.x} of ${r.s1} XP to ${r.nx[1]}`:`${r.x} XP, top rank reached`}</div></div></div>
+<div class="row wrap" style="margin-top:10px"><span title="Hearts">${H}</span><span class="sp"></span><b>${coin(20)} ${S.gold}</b>${top}</div></div>`}
+
+function home(){
+ const t=day(),m=S.mins[t]||{},cl=S.claimed[t]||[],st=streak(),wm=wkMins(),wt=WKT(),wd=(S.wk||{}).k===wkKey(),bo=(S.xp2||0)-Date.now();
+ let w='';for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const on=S.mins[day(d)];w+=`<span>${'SMTWTFS'[d.getDay()]}<i class="${on?'on':''}">${on?'✓':''}</i></span>`}
+ const q=quests().map(q=>{const d=cl.includes(q.id),p=Math.min(q.m,m[q.id]||0),left=q.ch?q.m:Math.max(1,q.m-p);return `<div class="q ${d?'done':''}"><span style="font-size:28px">${q.icon}</span><div class="sp"><b>${esc(q.story)}</b><div class="mute">${esc(q.name)}. ${q.tag}: ${q.ch?0:p} of ${q.m} min. Reward: ${q.ch?'double':'30 XP, 20 gold, 1 heart'}</div></div>${d?'<b class="ok">✔ Completed</b>':`<button class="chip go2" data-p="${q.id}" data-m="${left}">Log ${left} min</button>`}</div>`}).join('');
+ const warn=!S.hearts?`<div class="card warn"><b>Your hero is exhausted.</b><br>XP is halved until you complete a quest and restore a heart.</div>`:'';
+ const mood=S.sick===t?`<div class="card warn"><b>You feel sick.</b> No gold today. Practice to recover.</div>`:S.insp===t?`<div class="card"><b>You feel inspired!</b> +20% XP today.</div>`:'';
+ const md=ymood(),ys=YM[md][new Date().getDate()%YM[md].length].replace('{n}',S.name),yh=`<div class="card"><div class="row">${yuki(md,56)}<div class="sp"><b>${esc(yn())}</b><div class="mute">${esc(ys)}</div></div><button class="chip go" data-act="chat">Chat</button></div></div>`,vil=`<div class="card"><h3>The village</h3><div class="mute">Talk to the locals. More villagers arrive as you level up: the Guard at level 2, the Merchant at level 3.</div><div class="row wrap" style="margin-top:10px">${Object.keys(DLG).filter(k=>lv(hxp(),120)>={sage:1,grd:2,mer:3}[k]).map(k=>`<button class="chip go2" data-npc="${k}">${DLG[k].e} ${DLG[k].n}</button>`).join('')}</div></div>`;
+ const ev1=evt(),evh=ev1.st==='open'?(ev1.type==='dragon'?`<div class="card warn"><h3>Rare event: a dragon attacks the village!</h3><div class="mute">Log at least 20 minutes in one go today to drive it away. Reward: 100 gold and 60 XP.</div><div class="row" style="margin-top:10px"><button class="chip go" data-ev="acc">Fight</button><button class="chip" data-ev="skip">Hide</button></div></div>`:ev1.type==='chest'?`<div class="card"><h3>Event: a chest in the forest</h3><div class="mute">You spot an old chest between the bamboo. It could be treasure, or a trap.</div><div class="row" style="margin-top:10px"><button class="chip go" data-ev="open">Open it</button><button class="chip" data-ev="skip">Leave it</button></div></div>`:`<div class="card"><h3>Event: bandits at the village</h3><div class="mute">Defend the village by logging at least 10 minutes in one go today. Reward: 40 gold and 40 XP.</div><div class="row" style="margin-top:10px"><button class="chip go" data-ev="acc">Defend</button><button class="chip" data-ev="skip">Ignore</button></div></div>`):ev1.st==='acc'?`<div class="card"><h3>Defend the village</h3><div class="mute">Log ${ev1.type==='dragon'?20:10} minutes or more in one go today to drive the ${ev1.type==='dragon'?'dragon':'bandits'} away.</div></div>`:'';
+ const elx=bo>0?`<div class="card"><b>Elixir of Focus is active.</b> Double XP for ${Math.ceil(bo/6e4)} more minutes.</div>`:'';
+ return scene()+warn+mood+elx+`<div class="card"><h3>Today's quests</h3><div class="mute">Do the activity in real life, then log it. Quests change every day.</div>${q}</div>${yh}<div class="row" style="justify-content:center"><button class="chip" data-act="more">${S.more?'Show less':'More: events, weekly task, village'}</button></div>${S.more?`${evh}
+<div class="card"><h3>The Sage's weekly task</h3><div class="mute">Practice ${wt} minutes this week. Reward: ${WKR()} XP and ${WKR()} gold. Talk to the Sage to choose your path.</div><div class="bar" style="margin:8px 0"><i style="width:${Math.min(100,wm/wt*100)}%"></i></div><b class="${wd?'ok':''}">${wd?'✔ Completed':Math.min(wm,wt)+' of '+wt+' min'}</b></div>
+<div class="card"><h3>This week</h3><div class="wk">${w}</div><div class="mute" style="margin-top:8px">${st?`Streak bonus: +${Math.min(50,st*10)}% XP.`:'Practice today to start a streak.'} Each day without practice costs a heart and 10 gold.</div></div>${vil}`:''}`}
+
+function skills(){
+ const L=lv(hxp(),120);
+ return `<div class="mute" style="margin:8px 2px">Tap a button to log time you really practiced. You earn 2 XP and about 1 gold per 5 minutes.</div>`+S.skills.map(s=>{const l=lv(s.xp,50),b=50*(l-1)**2,n=50*l*l;
+ if((s.ul||1)>L)return `<div class="card" style="opacity:.65"><div class="row"><span>${svg('lock','currentColor',28)}</span><div class="sp"><b>${esc(s.name)}</b><div class="mute">Unlocks at hero level ${s.ul}</div></div></div></div>`;
+ return `<div class="card"><div class="row"><span style="font-size:30px">${s.icon}</span><div class="sp"><b>${esc(s.name)}</b><div class="mute">Level ${l}: ${s.xp-b} of ${n-b} XP</div></div></div><div class="bar" style="margin:8px 0"><i style="width:${pct(s.xp,50)}%"></i></div><div class="row">${[15,30,60].map(m=>`<button class="chip go" data-p="${s.id}" data-m="${m}">+${m} min</button>`).join('')}</div><div class="row" style="margin-top:8px"><button class="chip" data-up="${s.id}" ${(s.up||0)>=5||S.gold<100*((s.up||0)+1)?'disabled':''}>${(s.up||0)>=5?'Max upgrade':`Upgrade +10% XP, ${coin(14)} ${100*((s.up||0)+1)}`}</button><span class="mute">XP bonus: +${10*(s.up||0)}%</span></div></div>`}).join('')+
+ `<div class="card"><h3>New skill</h3><input id="ns" maxlength="24" placeholder="Guitar, reading, meditation"><div class="mute" style="margin-top:10px">Choose an icon</div><div class="row wrap" style="margin-top:6px">${ICONS.map((i,n)=>`<button class="chip ico ${n==ob.ic?'on':''}" data-ic="${n}">${i}</button>`).join('')}</div><button class="btn" data-act="add" style="margin-top:12px">Add skill</button></div>`}
+
+function heroTab(){
+ const r=rank(),c=CL[S.cls],tot=Object.values(S.mins).reduce((a,d)=>a+Object.values(d).reduce((p,n)=>p+n,0),0),lk=z=>svg('lock','currentColor',z);
+ const ranks=TITLES.map((t,i)=>{const u=r.l>=t[0],cur=i==r.i;return `<div class="rk ${cur?'cur':''} ${u?'':'lock'}"><span class="em">${u?EMB[i]:lk(24)}</span><div class="sp"><b>${t[1]}</b><div class="mute">${cur?'Current rank':u?'Earned':`Level ${t[0]}, ${120*(t[0]-1)**2} XP`}</div></div></div>`}).join('');
+ const story=LORE.map((t,i)=>r.l>=TITLES[i][0]?`<p style="margin:8px 0"><b>${TITLES[i][1]}</b><br>${esc(t).replace('{n}',esc(S.name))}</p>`:'').filter(Boolean).slice(-3).join('');
+ const shop=SHOP.map(it=>{const own=it[0]==='fox'||it[0]==='mask'?S.own[LOOT.find(l=>l[2]===it[1])[1]]:0;return `<div class="q"><div class="sp"><b>${it[1]}</b><div class="mute">${it[2]}</div></div>${own?'<b class="ok">Owned</b>':`<button class="chip go" data-buy="${it[0]}" ${S.gold<it[3]?'disabled':''}>${coin(16)} ${it[3]}</button>`}</div>`}).join('');
+ const gear=LOOT.map((it,i)=>{const u=r.l>=it[0]||S.own[it[1]],on=S.gear[it[3]]===it[1];if(it[0]==99&&!u)return '';return `<button class="chip ico ${on?'on':u?'':'off'}" ${u?`data-eq="${i}"`:'disabled'}>${u?it[1]:lk(16)} ${it[2]}${u?'':', level '+it[0]}</button>`}).join('');
+ return scene()+`<div class="card"><h3>Ranks</h3>${ranks}</div>
+<div class="card"><h3>Chronicle</h3><div class="mute" style="color:var(--ink)">${story}</div></div>
+<div class="card"><h3>Shop</h3><div class="mute">Spend the gold you earn from practice.</div>${shop}</div>
+<div class="card"><h3>Wardrobe</h3><div class="mute">Gear and pets unlock as you level up or buy them. Tap to equip.</div><div class="row wrap" style="margin-top:10px">${gear}</div></div>
+<div class="card"><h3>${c[1]} abilities</h3><div class="row wrap" style="margin-top:10px">${c[3].map((a,i)=>{const u=r.l>=(i+1)*2;return `<span class="chip ${u?'on':'off'}">${u?'✨':lk(16)} ${a}${u?'':', level '+(i+1)*2}</span>`}).join('')}</div></div>
+<div class="card"><h3>Achievements</h3><div class="mute">Earn achievements to unlock titles. Tap an earned one to show it under your name.</div>${ACH.map(a=>{const u=(S.ach||[]).includes(a[0]);return `<div class="q"><div class="sp"><b>${a[1]}</b><div class="mute">${a[2]}</div></div>${u?`<button class="chip ${S.ttl===a[0]?'on':''}" data-ttl="${a[0]}">${S.ttl===a[0]?'Shown':'Show title'}</button>`:`<span class="mute">Locked</span>`}</div>`}).join('')}</div>
+<div class="card"><h3>How it works</h3><div class="mute" style="color:var(--ink);margin-top:6px">• 2 XP per minute practiced in real life, plus about 1 gold per 5 minutes.<br>• Streak: +10% XP per day, up to +50%.<br>• Quest: +30 XP, +20 gold and 1 heart. Weekly challenge: +100 XP and +100 gold.<br>• A day without practice costs 1 heart and 10 gold. At 0 hearts your hero is exhausted and earns half XP.<br>• Hero level comes from total XP and unlocks new skills, gear and story chapters.<br>• Challenge quests must be done in one go, and pay double.<br>• Complete 3 quests in a day to feel Inspired: +20% XP the next day. Miss 3 days in a row and you fall sick: no gold for a day.<br>• Skill upgrades give +10% XP each, up to 5. Mystery chests hold common, rare or epic gear.</div></div>
+<div class="card"><h3>Yuki's AI</h3><div class="mute">Optional. Paste the address of your own Yuki server (never an API key). Leave it empty to use the built-in AI when available.</div><input id="api" placeholder="https://your-worker.workers.dev" value="${esc(S.aiUrl||'')}"><button class="chip" data-act="api" style="margin-top:8px">Save</button></div>
+<div class="card"><h3>Backup</h3><div class="mute">Your progress lives in this browser. Copy your code to keep it safe, or paste a code to restore it.</div><textarea id="bk" rows="3"></textarea><div class="row wrap" style="margin-top:8px"><button class="chip" data-act="exp">Show my code</button><button class="chip" data-act="imp">Restore from code</button></div></div>
+<div class="card"><h3>Journey so far</h3><div class="mute" style="margin-top:6px">${tot} minutes practiced in real life. Best streak: ${S.best||0} days.</div>
+<div class="row wrap" style="margin-top:12px"><button class="chip" data-act="snd">${S.mute?'Sound off':'Sound on'}</button><button class="chip" data-act="reset">${rs?'Tap again to erase everything':'Reset adventure'}</button></div></div>`}
+
+function onboard(){
+ return `<div style="text-align:center;padding:26px 0 6px"><div style="font-size:56px">🗡️</div><h1 style="font-size:38px">Level Up</h1><p class="mute" style="font-size:15px;margin:6px 0 0">Ta vie, ton aventure.<br>Turn your real-life self-improvement into an epic fantasy adventure.</p></div>
+<div class="card"><b>Name your hero</b><input id="nm" maxlength="20" placeholder="Hero name"></div>
+<div class="card"><b>Choose your class</b><div class="cls">${Object.entries(CL).map(([k,c])=>`<button class="chip ${ob.cls==k?'on':''}" data-cl="${k}">${c[0]} ${c[1]}<br><small>${c[2]}</small></button>`).join('')}</div></div>
+<div class="card"><b>Pick your starting skills</b><div class="mute">The first skill starts unlocked. The others unlock as your hero ranks up.</div><div class="row wrap" style="margin-top:10px">${DEF.map(d=>`<button class="chip ${ob.sk.includes(d[0])?'on':''}" data-sk="${d[0]}">${d[1]} ${d[2]}</button>`).join('')}</div></div>
+<button class="btn" style="width:100%;padding:14px;font-size:16px" data-act="start">Begin the adventure ⚔️</button>`}
+
+function render(){
+ const a=$('#app'),n=$('nav');if(S)upkeep();document.documentElement.style.setProperty('--z0',S?pick(ZONES,lv(hxp(),120))[3].split(',')[0]:'transparent');
+ if(!S){a.innerHTML=onboard();n.style.display='none';return}
+ a.innerHTML=({home,skills,hero:heroTab}[tab])();
+ n.style.display='flex';
+ n.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
+}
+function start(){
+ const n=$('#nm').value.trim();
+ if(!n){$('#nm').focus();return toast('Name your hero first')}
+ if(!ob.sk.length)return toast('Pick at least one skill');
+ S={name:n,cls:ob.cls,aura:0,skills:DEF.filter(d=>ob.sk.includes(d[0])).map((d,i)=>({id:d[0],icon:d[1],name:d[2],xp:0,ul:i?i*2+1:1})),mins:{},claimed:{},bonus:0,best:0,hearts:3,gold:0,own:{},chk:ago(1),gear:{acc:'',pet:''}};
+ save();tab='home';render();toast(`Welcome, ${n}. Your quest begins.`);showLore(0);
+}
+function add(){
+ const n=$('#ns').value.trim();if(!n)return toast('Name your skill first');
+ S.skills.push({id:'c'+Date.now(),icon:ICONS[ob.ic||0],name:n.slice(0,24),xp:0});save();render();toast('Skill added');
+}
+function reset(){
+ if(!rs){rs=1;render();setTimeout(()=>{rs=0;if(S)render()},4000);return}
+ try{localStorage.removeItem(K)}catch(e){}if(typeof iappyx!=='undefined'){try{iappyx.remove(K)}catch(e){}}
+ S=null;rs=0;ob={cls:'monk',sk:['focus','body','lang'],ic:0};render();
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button,.av');if(!b)return;const d=b.dataset;pt=[e.clientX,e.clientY];
+ if(d.t){tab=d.t;render();scrollTo(0,0)}
+ else if(d.p)practice(d.p,+d.m);
+ else if(d.cl){ob.cls=d.cl;document.querySelectorAll('[data-cl]').forEach(x=>x.classList.toggle('on',x===b))}
+ else if(d.sk){const i=ob.sk.indexOf(d.sk);i<0?ob.sk.push(d.sk):ob.sk.splice(i,1);b.classList.toggle('on',i<0)}
+ else if(d.ic){ob.ic=+d.ic;document.querySelectorAll('[data-ic]').forEach(x=>x.classList.toggle('on',x===b))}
+ else if(d.a==='aura'){S.aura=((S.aura||0)+1)%AURA.length;save();render()}
+ else if(d.eq!==undefined)equip(d.eq);
+ else if(d.buy)buy(d.buy);
+ else if(d.up)upgrade(d.up);
+ else if(d.npc)dopen(d.npc);
+ else if(d.d)dgo(d.d);
+ else if(d.y)cask(d.y);
+ else if(d.g!==undefined)ygift(+d.g);
+ else if(d.ev)evAct(d.ev);
+ else if(d.ch)choose(d.ch);
+ else if(d.ttl)setTitle(d.ttl);
+ else if(d.act==='start')start();
+ else if(d.act==='snd'){S.mute=!S.mute;save();render()}
+ else if(d.act==='lore')$('#lore').style.display='none';
+ else if(d.act==='exp')$('#bk').value=btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+ else if(d.act==='imp')impt();
+ else if(d.act==='chat')copen();
+ else if(d.act==='send')csend();
+ else if(d.act==='rn'){rnm=1;const c=$('#ci');c.placeholder='Type her new name, then Send';c.focus()}
+ else if(d.act==='ng')ngPlus();
+ else if(d.act==='more'){S.more=!S.more;save();render()}
+ else if(d.act==='api'){const v=$('#api').value.trim();if(v&&!/^https:\/\//.test(v))return toast('Use an https:// address');S.aiUrl=v;save();toast(v?'Yuki server saved':'Using the built-in AI')}
+ else if(d.act==='cx')$('#chat').style.display='none';
+ else if(d.act==='add')add();
+ else if(d.act==='reset')reset();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){if(e.target.id==='ns')add();else if(e.target.id==='ci')csend()}});
+['home','scroll','shield'].forEach((n,i)=>document.querySelectorAll('nav b')[i].innerHTML=svg(n,'currentColor',24));
+// iappyxOS injects its bridge a moment after the page loads, so wait briefly (about 0.4s) before reading saved data.
+let bootTries=0;
+(function bootWait(){
+ if(typeof iappyx==='undefined'&&bootTries++<8){setTimeout(bootWait,50);return}
+ if(typeof iappyx!=='undefined'){try{const v=iappyx.load(K);if(v){S=JSON.parse(v);if(!S.skills)S=null}}catch(e){}}
+ migrate();render()})();
+</script>
+</body>
+</html>
